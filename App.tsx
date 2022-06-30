@@ -1,8 +1,10 @@
 import * as eva from '@eva-design/eva';
-import { ApplicationProvider, IconRegistry, Layout, Text } from '@ui-kitten/components';
+import { NavigationContainer } from '@react-navigation/native';
+import { ApplicationProvider, IconRegistry } from '@ui-kitten/components';
 import { EvaIconsPack } from '@ui-kitten/eva-icons';
-import { StyleSheet } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import { Provider } from 'react-redux';
+import Main from './components/Main';
 import { store } from './redux/store';
 
 export default function App() {
@@ -10,18 +12,13 @@ export default function App() {
     <>
       <IconRegistry icons={EvaIconsPack} />
       <Provider store={store}>
-        <ApplicationProvider {...eva} theme={eva.dark}>
+        <NavigationContainer>
           <ApplicationProvider {...eva} theme={eva.dark}>
-            <Layout style={styles.container}>
-              <Text category="h1">Welcome to App.</Text>
-            </Layout>
+            <Main />
+            <StatusBar hidden />
           </ApplicationProvider>
-        </ApplicationProvider>
+        </NavigationContainer>
       </Provider>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-});
