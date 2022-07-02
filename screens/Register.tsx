@@ -1,10 +1,11 @@
 import { Button, Icon, Input, Layout, Text } from '@ui-kitten/components';
-import { useState } from 'react';
-import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { StyleSheet, ToastAndroid, TouchableWithoutFeedback, View } from 'react-native';
 import ButtonWithLoading from '../components/ButtonWithLoading';
 import { selectKeyboardHidden } from '../redux/feature/keyboard/keyboardSlice';
-import { useAppSelector } from '../redux/hooks';
-import type { AuthNavStackProps } from '../types/NavigationParams';
+import { register, selectAuthError, selectAuthLoading } from '../redux/feature/user/userSlice';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import type { AuthNavigationProps } from '../types/navigation';
 import {
   emailValidationError,
   nameValidationError,
@@ -14,15 +15,23 @@ import {
 
 type FormInput = [string, null | string];
 
-export default function Register({ navigation }: AuthNavStackProps<'Register'>) {
+export default function Register({ navigation }: AuthNavigationProps<'Register'>) {
   const [email, setEmail] = useState<FormInput>(['', null]);
   const [name, setName] = useState<FormInput>(['', null]);
   const [password, setPassword] = useState<FormInput>(['', null]);
   const [phone, setPhone] = useState<FormInput>(['', null]);
   const [isInputEntrySecured, setIsInputEntrySecured] = useState(true);
   const [isRegisterAttempted, setIsRegisterAttempted] = useState(false);
-  const [loading, setLoading] = useState(false);
   const isKeyboardHidden = useAppSelector(selectKeyboardHidden);
+  const loading = useAppSelector(selectAuthLoading);
+  const authError = useAppSelector(selectAuthError);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (authError !== null) {
+      ToastAndroid.show('Some error occured', ToastAndroid.LONG);
+    }
+  }, [authError]);
 
   const registerHandler = () => {
     setIsRegisterAttempted(true);
@@ -37,11 +46,14 @@ export default function Register({ navigation }: AuthNavStackProps<'Register'>) 
 
     if (emailError || passwordError || nameError || phoneError) return;
 
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 4000);
-    // FIXME: register user using api
+    dispatch(
+      register({
+        email: email[0],
+        name: name[0],
+        phone: phone[0],
+        password: password[0],
+      })
+    );
   };
 
   const renderIcon = (props: any) => (
@@ -114,7 +126,12 @@ export default function Register({ navigation }: AuthNavStackProps<'Register'>) 
       {isKeyboardHidden && (
         <View style={styles.footer}>
           <Text>Already have an account?</Text>
-          <Button appearance="ghost" size="large" onPress={() => navigation.navigate('Login')}>
+          <Button
+            disabled={loading}
+            appearance="ghost"
+            size="large"
+            onPress={() => navigation.navigate('Login')}
+          >
             Login
           </Button>
         </View>

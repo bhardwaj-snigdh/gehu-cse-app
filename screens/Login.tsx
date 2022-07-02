@@ -1,21 +1,30 @@
 import { Button, Icon, Input, Layout, Text } from '@ui-kitten/components';
-import { useState } from 'react';
-import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { StyleSheet, ToastAndroid, TouchableWithoutFeedback, View } from 'react-native';
 import ButtonWithLoading from '../components/ButtonWithLoading';
 import { selectKeyboardHidden } from '../redux/feature/keyboard/keyboardSlice';
-import { useAppSelector } from '../redux/hooks';
-import type { AuthNavStackProps } from '../types/NavigationParams';
+import { login, selectAuthError, selectAuthLoading } from '../redux/feature/user/userSlice';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import type { AuthNavigationProps } from '../types/navigation';
 import { emailValidationError, passwordValidationError } from '../utils/validations';
 
 type FormInput = [string, null | string];
 
-export default function Login({ navigation }: AuthNavStackProps<'Login'>) {
+export default function Login({ navigation }: AuthNavigationProps<'Login'>) {
   const [email, setEmail] = useState<FormInput>(['', null]);
   const [password, setPassword] = useState<FormInput>(['', null]);
   const [isInputEntrySecured, setIsInputEntrySecured] = useState(true);
   const [isLoginAttempted, setIsLoginAttempted] = useState(false);
-  const [loading, setLoading] = useState(false);
   const isKeyboardHidden = useAppSelector(selectKeyboardHidden);
+  const loading = useAppSelector(selectAuthLoading);
+  const authError = useAppSelector(selectAuthError);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (authError !== null) {
+      ToastAndroid.show(authError, ToastAndroid.LONG);
+    }
+  }, [authError]);
 
   const loginHandler = () => {
     setIsLoginAttempted(true);
@@ -26,11 +35,12 @@ export default function Login({ navigation }: AuthNavStackProps<'Login'>) {
 
     if (emailError || passwordError) return;
 
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 4000);
-    // FIXME: login user using api
+    dispatch(
+      login({
+        email: email[0],
+        password: password[0],
+      })
+    );
   };
 
   const renderIcon = (props: any) => (
@@ -87,6 +97,7 @@ export default function Login({ navigation }: AuthNavStackProps<'Login'>) {
             <Button
               appearance="ghost"
               size="large"
+              disabled={loading}
               onPress={() => {
                 setIsLoginAttempted(false);
                 navigation.navigate('Register');

@@ -28,6 +28,7 @@ export default function ButtonWithLoading({
   return (
     <Button
       onPress={onPress}
+      disabled={loading}
       accessoryRight={loading ? <LoadingIndicator /> : <Icon name={icon} />}
       appearance={loading ? 'outline' : 'filled'}
       style={style}
