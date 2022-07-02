@@ -7,5 +7,6 @@ export default interface Notice {
   createdAt: string;
   updatedAt: string;
   issuer: Pick<User, 'name'>;
+  issuerId: number;
   audience: RoleType[];
 }

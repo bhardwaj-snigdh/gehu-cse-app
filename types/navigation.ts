@@ -20,7 +20,7 @@ export type AppTabsParamList = {
 export type NoticeStackParamList = {
   Notices: undefined;
   FullPageNotice: { notice: Notice };
-  CreateNotice: undefined;
+  CreateNotice: { editing: false; notice: null } | { editing: true; notice: Notice };
 };
 
 export type NoticeNavigationProps<T extends keyof NoticeStackParamList> = {

@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import { Layout, List, Spinner, Text } from '@ui-kitten/components';
+import { Layout, List, Spinner, Text, useTheme } from '@ui-kitten/components';
 import { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import FloatingButton from '../components/FloatingButton';
@@ -22,6 +22,7 @@ export default function Notices() {
   const token = useAppSelector(selectToken) as string;
   const user = useAppSelector(selectUser) as User;
   const dispatch = useAppDispatch();
+  const theme = useTheme();
 
   useEffect(() => {
     dispatch(fetchAllNotices({ token }));
@@ -34,9 +35,13 @@ export default function Notices() {
           <Spinner status="basic" size="giant" />
         </Layout>
       ) : (
-        <Layout style={styles.layout}>
+        <Layout level="4" style={styles.layout}>
           <List
-            contentContainerStyle={notices.length === 0 ? styles.pageCenter : {}}
+            contentContainerStyle={
+              notices.length === 0
+                ? styles.pageCenter
+                : { backgroundColor: theme['background-basic-color-4'] }
+            }
             ListEmptyComponent={<Text category="h6">No notices 📪</Text>}
             data={notices}
             renderItem={({ item }) => <NoticeCard notice={item} />}
@@ -45,7 +50,10 @@ export default function Notices() {
         </Layout>
       )}
       {user.role !== Role.USER && (
-        <FloatingButton icon="plus" onPress={() => navigator.navigate('CreateNotice')} />
+        <FloatingButton
+          icon="plus"
+          onPress={() => navigator.navigate('CreateNotice', { editing: false, notice: null })}
+        />
       )}
     </>
   );

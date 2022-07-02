@@ -5,6 +5,7 @@ import FloatingButton from '../components/FloatingButton';
 import { selectKeyboardHidden } from '../redux/feature/keyboard/keyboardSlice';
 import {
   issueNotice,
+  patchNoticeById,
   selectNoticeError,
   selectNoticeLoading,
 } from '../redux/feature/notice/noticeSlice';
@@ -15,14 +16,23 @@ import { NoticeNavigationProps } from '../types/navigation';
 import type { RoleType, User } from '../types/userAndRoles';
 import type Notice from '../types/notice';
 
-// TODO: Edit Notice Feature
-export default function CreateNotice({ navigation }: NoticeNavigationProps<'CreateNotice'>) {
-  const [title, setTitle] = useState('');
-  const [body, setBody] = useState('');
-  const [isStudentChecked, setIsStudentChecked] = useState(false);
-  const [isFacultyChecked, setIsFacultyChecked] = useState(false);
-  const [isHodChecked, setIsHodChecked] = useState(false);
-  const [isAdminChecked, setIsAdminChecked] = useState(false);
+export default function CreateNotice({ navigation, route }: NoticeNavigationProps<'CreateNotice'>) {
+  const editingMode = route.params.editing;
+  const { notice } = route.params;
+  const [title, setTitle] = useState(() => notice?.title ?? '');
+  const [body, setBody] = useState(() => notice?.body ?? '');
+  const [isStudentChecked, setIsStudentChecked] = useState(
+    () => notice?.audience.includes(Role.USER) ?? false
+  );
+  const [isFacultyChecked, setIsFacultyChecked] = useState(
+    () => notice?.audience.includes(Role.FACULTY) ?? false
+  );
+  const [isHodChecked, setIsHodChecked] = useState(
+    () => notice?.audience.includes(Role.HOD) ?? false
+  );
+  const [isAdminChecked, setIsAdminChecked] = useState(
+    () => notice?.audience.includes(Role.ADMIN) ?? false
+  );
   const [isCreateAttempted, setIsCreateAttempted] = useState(false);
   const bodyInputRef = useRef<TextInput>(null);
   const token = useAppSelector(selectToken) as string;
@@ -49,10 +59,19 @@ export default function CreateNotice({ navigation }: NoticeNavigationProps<'Crea
     if (isHodChecked) audience.push(Role.HOD);
     if (isAdminChecked) audience.push(Role.ADMIN);
 
-    dispatch(issueNotice({ token, notice: { title, body, audience } })).then((res) => {
-      ToastAndroid.show('Notice Published', ToastAndroid.LONG);
-      navigation.navigate('FullPageNotice', { notice: res.payload as Notice });
-    });
+    if (editingMode) {
+      dispatch(
+        patchNoticeById({ id: notice?.id as number, token, notice: { title, body, audience } })
+      ).then((res) => {
+        ToastAndroid.show('Notice Edited', ToastAndroid.LONG);
+        navigation.navigate('FullPageNotice', { notice: res.payload as Notice });
+      });
+    } else {
+      dispatch(issueNotice({ token, notice: { title, body, audience } })).then((res) => {
+        ToastAndroid.show('Notice Published', ToastAndroid.LONG);
+        navigation.navigate('FullPageNotice', { notice: res.payload as Notice });
+      });
+    }
   };
 
   return (

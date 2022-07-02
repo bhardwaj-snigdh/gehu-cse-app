@@ -17,8 +17,8 @@ export default function NoticeCard({ notice }: NoticeCardProps) {
       style={({ pressed }) => [
         {
           backgroundColor: pressed
-            ? theme['background-basic-color-3']
-            : theme['background-basic-color-4'],
+            ? theme['background-basic-color-2']
+            : theme['background-basic-color-1'],
         },
         styles.card,
       ]}
