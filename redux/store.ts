@@ -1,13 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
 import keyboardReducer from './feature/keyboard/keyboardSlice';
 import authReducer from './feature/user/userSlice';
+import noticeReducer from './feature/notice/noticeSlice';
 
-// FIXME: Fix user state
-// TODO: Add notices state
+// FIXME: api base as env variable
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     keyboard: keyboardReducer,
+    notice: noticeReducer,
   },
 });
 
