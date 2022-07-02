@@ -7,6 +7,7 @@ import { Provider } from 'react-redux';
 import Main from './components/Main';
 import { store } from './redux/store';
 
+// TODO: session logout at token expiry, with draft saving
 export default function App() {
   return (
     <>

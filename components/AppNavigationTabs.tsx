@@ -1,4 +1,10 @@
-import { BottomNavigation, BottomNavigationTab, Icon, Layout } from '@ui-kitten/components';
+import {
+  BottomNavigation,
+  BottomNavigationTab,
+  Icon,
+  Layout,
+  useTheme,
+} from '@ui-kitten/components';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import Account from '../screens/Account';
@@ -28,15 +34,24 @@ function BottomTabBar({ navigation, state }: BottomTabBarProps) {
 const Tabs = createBottomTabNavigator<AppTabsParamList>();
 
 export default function AppNavigationTabs() {
+  const theme = useTheme();
+
   return (
     <Layout style={{ flex: 1 }}>
       <Tabs.Navigator
-        tabBar={BottomTabBar}
         screenOptions={{
-          headerShown: false,
+          headerTitle: 'GEHU CSE',
+          headerTitleAlign: 'center',
+          headerStyle: { backgroundColor: theme['background-basic-color-1'] },
+          headerTitleStyle: { color: theme['text-basic-color'] },
         }}
+        tabBar={BottomTabBar}
       >
-        <Tabs.Screen name="NoticeStack" component={NoticeScreensStack} />
+        <Tabs.Screen
+          options={{ headerShown: false }}
+          name="NoticeStack"
+          component={NoticeScreensStack}
+        />
         <Tabs.Screen name="Account" component={Account} />
       </Tabs.Navigator>
     </Layout>
