@@ -2,8 +2,8 @@ import { BottomNavigation, BottomNavigationTab, Icon, Layout } from '@ui-kitten/
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import Account from '../screens/Account';
-import Notices from '../screens/Notices';
-import type { AppTabsParamList } from '../types/NavigationParams';
+import NoticeScreensStack from './NoticeScreensStack';
+import type { AppTabsParamList } from '../types/navigation';
 
 function InboxIcon(props: any) {
   return <Icon {...props} name="inbox-outline" />;
@@ -36,7 +36,7 @@ export default function AppNavigationTabs() {
           headerShown: false,
         }}
       >
-        <Tabs.Screen name="Notices" component={Notices} />
+        <Tabs.Screen name="NoticeStack" component={NoticeScreensStack} />
         <Tabs.Screen name="Account" component={Account} />
       </Tabs.Navigator>
     </Layout>
