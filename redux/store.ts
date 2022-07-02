@@ -3,7 +3,6 @@ import keyboardReducer from './feature/keyboard/keyboardSlice';
 import authReducer from './feature/user/userSlice';
 import noticeReducer from './feature/notice/noticeSlice';
 
-// FIXME: api base as env variable
 export const store = configureStore({
   reducer: {
     auth: authReducer,

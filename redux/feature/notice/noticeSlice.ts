@@ -11,11 +11,12 @@ interface NoticeState {
 const fetchAllNotices = createAsyncThunk(
   'notice/fetchAll',
   async ({ token }: { token: string }) => {
-    const { error, data } = await fetch(`${process.env.REACT_APP_API_BASE}/notices`, {
+    const { error, data } = await fetch(`${process.env['API_BASE']}/notices`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     }).then((res) => res.json());
+
     if (error) throw new Error(error);
 
     return data.notices as Notice[];
@@ -31,7 +32,7 @@ const issueNotice = createAsyncThunk(
     token: string;
     notice: Pick<Notice, 'title' | 'body' | 'audience'>;
   }) => {
-    const { error, data } = await fetch(`${process.env.REACT_APP_API_BASE}/notices`, {
+    const { error, data } = await fetch(`${process.env['API_BASE']}/notices`, {
       method: 'POST',
       body: JSON.stringify(notice),
       headers: {
@@ -56,8 +57,8 @@ const patchNoticeById = createAsyncThunk(
     token: string;
     notice: Pick<Notice, 'title' | 'body' | 'audience'>;
   }) => {
-    const { error, data } = await fetch(`${process.env.REACT_APP_API_BASE}/notices/${id}`, {
-      method: 'POST',
+    const { error, data } = await fetch(`${process.env['API_BASE']}/notices/${id}`, {
+      method: 'PATCH',
       body: JSON.stringify(notice),
       headers: {
         Authorization: `Bearer ${token}`,

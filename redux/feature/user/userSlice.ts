@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { RootState } from '../../store';
 import type { User } from '../../../types/userAndRoles';
+// import * as env from 'react-native-dotenv';
 
 interface AuthState {
   booting: boolean;
@@ -18,7 +19,7 @@ const login = createAsyncThunk(
   'auth/login',
   async ({ email, password }: { email: string; password: string }) => {
     try {
-      const { error, data } = await fetch(`${process.env.REACT_APP_API_BASE}/users/login`, {
+      const { error, data } = await fetch(`${process.env['API_BASE']}/users/login`, {
         method: 'POST',
         body: JSON.stringify({ email, password }),
         headers: {
@@ -45,7 +46,7 @@ const register = createAsyncThunk(
     phone,
   }: Pick<User, 'email' | 'phone' | 'name'> & { password: string }) => {
     try {
-      const { error, data } = await fetch(`${process.env.REACT_APP_API_BASE}/users/register`, {
+      const { error, data } = await fetch(`${process.env['API_BASE']}/users/register`, {
         method: 'POST',
         body: JSON.stringify({ email, name, password, phone }),
         headers: {
